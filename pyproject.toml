@@ -1,0 +1,35 @@
+[tool.poetry]
+name = "fastadmin"
+version = "0.1.0"
+description = "A fast admin dashboard based on fastapi and tortoise-orm with react-admin."
+authors = ["long2ice <long2ice@gmail.com>"]
+license = "Apache-2.0"
+readme = "README.md"
+homepage = "https://github.com/long2ice/fastadmin"
+repository = "https://github.com/long2ice/fastadmin.git"
+documentation = "https://github.com/long2ice/fastadmin"
+keywords = ["admin", "dashboard", "fastapi", "tortoise-orm"]
+packages = [
+    { include = "fastadmin" }
+]
+include = ["CHANGELOG.md", "LICENSE", "README.md"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+tortoise-orm = "*"
+fastapi = "*"
+uvicorn = "*"
+
+[tool.poetry.dev-dependencies]
+flake8 = "*"
+isort = "*"
+black = "^20.8b1"
+pytest = "*"
+pytest-xdist = "*"
+pytest-asyncio = "*"
+bandit = "*"
+pytest-mock = "*"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
