@@ -1,9 +1,11 @@
-from typing import Optional
-
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from fastapi.encoders import jsonable_encoder
+from starlette.requests import Request
 from starlette.responses import JSONResponse
+from tortoise import Model
 
-from fastadmin.types import Order
+from fastadmin.depends import get_model, get_query
+from fastadmin.schemas import Query
 
 router = APIRouter()
 
@@ -11,55 +13,61 @@ router = APIRouter()
 @router.get("/{resource}")
 async def get(
     resource: str,
-    _start: Optional[int],
-    _end: Optional[int],
-    _order: Optional[Order],
-    _sort: Optional[str],
+    model: Model = Depends(get_model),
+    query: Query = Depends(get_query),
 ):
+    count = await model.all().count()
+    data = (
+        await model.filter(**query.filter)
+        .order_by(query.sort)
+        .limit(query.limit)
+        .offset(query.offset)
+        .values()
+    )
     return JSONResponse(
-        content=[
-            {
-                "id": 1,
-                "name": "Leanne Graham",
-                "username": "Bret",
-                "email": "Sincere@april.biz",
-                "address": {
-                    "street": "Kulas Light",
-                    "suite": "Apt. 556",
-                    "city": "Gwenborough",
-                    "zipcode": "92998-3874",
-                    "geo": {"lat": "-37.3159", "lng": "81.1496"},
-                },
-                "phone": "1-770-736-8031 x56442",
-                "website": "hildegard.org",
-                "company": {
-                    "name": "Romaguera-Crona",
-                    "catchPhrase": "Multi-layered client-server neural-net",
-                    "bs": "harness real-time e-markets",
-                },
-            }
-        ],
-        headers={"X-Total-Count": "1"},
+        content=jsonable_encoder(data),
+        headers={
+            "Content-Range": f"{resource} {query.offset}-{query.offset + query.limit}/{count}"
+        },
     )
 
 
 @router.get("/{resource}/{pk}")
-async def get_one(resource: str, pk: int):
-    print(resource, pk)
+async def get_one(
+    pk: int,
+    model: Model = Depends(get_model),
+):
+    obj = await model.get(pk=pk)
+    return obj
 
 
 @router.post("/{resource}")
 async def create(
-    resource: str,
+    request: Request,
+    model: Model = Depends(get_model),
 ):
-    print(resource)
+    body = await request.json()
+    obj = await model.create(**body)
+    return obj
 
 
 @router.put("/{resource}/{pk}")
-async def update(resource: str, pk: int):
-    print(resource, pk)
+async def update(
+    request: Request,
+    pk: int,
+    model: Model = Depends(get_model),
+):
+    body = await request.json()
+    obj = await model.get(pk=pk)
+    await obj.update_from_dict(body).save()
+    return obj
 
 
 @router.delete("/{resource}/{pk}")
-async def delete(resource: str, pk: int):
-    print(resource, pk)
+async def delete(
+    pk: int,
+    model: Model = Depends(get_model),
+):
+    obj = await model.get(pk=pk)
+    await obj.delete()
+    return obj

@@ -9282,6 +9282,13 @@ ra-data-json-server@^3.12.0:
     query-string "^5.1.1"
     ra-core "^3.12.0"
 
+ra-data-simple-rest@^3.10.4:
+  version "3.10.4"
+  resolved "https://registry.npm.taobao.org/ra-data-simple-rest/download/ra-data-simple-rest-3.10.4.tgz#94bbcb8d08fa2aedcacf4561421fa5a3d59047a7"
+  integrity sha1-lLvLjQj6Ku3Kz0VhQh+lo9WQR6c=
+  dependencies:
+    query-string "^5.1.1"
+
 ra-i18n-polyglot@^3.12.0:
   version "3.12.0"
   resolved "https://registry.npm.taobao.org/ra-i18n-polyglot/download/ra-i18n-polyglot-3.12.0.tgz#737c6b7f647b9768e581c1e8027fdda55228d0fc"
